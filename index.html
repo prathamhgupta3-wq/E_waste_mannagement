@@ -2001,17 +2001,16 @@
              Priorities: Assigned Pickups, Pickup Details, Update Pickup Status, Collection History
              =================================================================== -->
         <div id="dash-view-collector" class="space-y-6 hidden">
-          
           <!-- Duty Status Toggle -->
           <div class="p-4 rounded-xl bg-white border border-[#E2EBE4] flex items-center justify-between shadow-sm">
             <div class="flex items-center gap-3">
               <span class="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
               <div>
                 <p class="font-bold text-xs text-[#1C2B22]">Active Duty Status: ON ROUTE</p>
-                <p class="text-[11px] text-[#4B6354]">Vehicle: Electric Van #04 (KA-01-EQ-774)</p>
+                <p class="text-[11px] text-[#4B6354]">Fleet ID: EV-VAN-04 • KA-01-EQ-774 • GPS Telemetry Active</p>
               </div>
             </div>
-            <button type="button" onclick="toggleCollectorDuty()" id="btn-collector-duty" class="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-xs">
+            <button type="button" onclick="toggleCollectorDuty()" id="btn-collector-duty" class="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-xs hover:bg-emerald-200 transition-colors">
               Go Off Duty
             </button>
           </div>
@@ -2036,41 +2035,50 @@
             </div>
           </div>
 
-          <!-- Section: Assigned Pickups (Actionable) -->
-          <div class="space-y-3">
+          <!-- Collector Sub-Tabs: Assigned Routes vs Collection History -->
+          <div class="flex border-b border-[#E2EBE4] gap-2">
+            <button type="button" onclick="switchCollectorSubtab('assigned')" id="col-subtab-btn-assigned" class="px-4 py-2 text-xs font-bold text-emerald-800 border-b-2 border-emerald-600 bg-white">
+              Assigned Route Pickups
+            </button>
+            <button type="button" onclick="switchCollectorSubtab('history')" id="col-subtab-btn-history" class="px-4 py-2 text-xs font-semibold text-[#4B6354] hover:text-[#1C2B22]">
+              Completed Collection History
+            </button>
+          </div>
+
+          <!-- Subview 1: Assigned Routes -->
+          <div id="collector-subview-assigned" class="space-y-3">
             <div class="flex items-center justify-between">
               <h3 class="font-bold text-sm text-[#1C2B22]">Assigned Pickup Routes</h3>
               <span class="text-xs text-[#4B6354]">Authorized collection dispatch</span>
             </div>
             <div id="collector-jobs-container" class="space-y-3"></div>
           </div>
-          <!-- Section: Collection History -->
-          <div class="space-y-3">
-            <h3 class="font-bold text-sm text-[#1C2B22]">Collector Summary Stats</h3>
-            <div class="grid grid-cols-3 gap-3">
-              <div class="p-3 rounded-xl bg-white border border-[#E2EBE4]">
-                <span class="text-[10px] font-bold text-[#4B6354] uppercase">Total Mass Collected</span>
-                <p class="text-lg font-extrabold text-emerald-800">1,420 kg</p>
-              </div>
-              <div class="p-3 rounded-xl bg-white border border-[#E2EBE4]">
-                <span class="text-[10px] font-bold text-[#4B6354] uppercase">Jobs Completed</span>
-                <p class="text-lg font-extrabold text-[#1C2B22]">38 Pickups</p>
-              </div>
-              <div class="p-3 rounded-xl bg-white border border-[#E2EBE4]">
-                <span class="text-[10px] font-bold text-[#4B6354] uppercase">Rating</span>
-                <p class="text-lg font-extrabold text-amber-600">4.9 ★</p>
-              </div>
+
+          <!-- Subview 2: Completed Collection History -->
+          <div id="collector-subview-history" class="space-y-3 hidden">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-sm text-[#1C2B22]">Collection History &amp; Vault Ledger</h3>
+              <span class="text-xs text-[#4B6354]">Statutory recycling chain of custody</span>
+            </div>
+            <div class="border border-[#E2EBE4] rounded-xl overflow-hidden bg-white shadow-sm">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-[#F5F7F0] border-b border-[#E2EBE4] text-[#4B6354]">
+                  <tr>
+                    <th class="p-3">Reference</th>
+                    <th class="p-3">Citizen Partner</th>
+                    <th class="p-3">Address &amp; Locality</th>
+                    <th class="p-3">Items Manifest</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="collector-history-table-body" class="divide-y divide-[#E2EBE4]"></tbody>
+              </table>
             </div>
           </div>
-
         </div>
 
-        <!-- ===================================================================
-             C. ADMINISTRATOR DASHBOARD VIEW
-             Priorities: Pending Requests, Collector Assignments, Collector Verification, Centre Management, Platform Stats
-             =================================================================== -->
         <div id="dash-view-admin" class="space-y-6 hidden">
-          
           <!-- Platform KPIs -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div class="p-3 rounded-xl bg-white border border-[#E2EBE4]">
@@ -2086,52 +2094,194 @@
               <p id="admin-stat-tonnage" class="text-xl font-extrabold text-[#1C2B22]">-- kg</p>
             </div>
             <div class="p-3 rounded-xl bg-white border border-[#E2EBE4]">
-              <span class="text-[10px] font-bold text-[#4B6354] uppercase">Compliance Rate</span>
+              <span class="text-[10px] font-bold text-[#4B6354] uppercase">Total Pickups</span>
               <p id="admin-stat-total" class="text-xl font-extrabold text-emerald-800">--</p>
             </div>
           </div>
 
-          <!-- Section: Pending Requests & Collector Assignment -->
-          <div class="space-y-3">
-            <h3 class="font-bold text-sm text-[#1C2B22]">Pending Pickup Requests</h3>
-            <div class="border border-[#E2EBE4] rounded-xl overflow-hidden bg-white shadow-sm">
-              <table class="w-full text-left text-xs">
+          <!-- Admin Sub-Navigation Tabs -->
+          <div class="flex flex-wrap border-b border-[#E2EBE4] gap-1 bg-[#F5F7F0] p-1.5 rounded-xl">
+            <button type="button" onclick="switchAdminSubtab('pickups')" id="admin-tab-btn-pickups" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-white text-emerald-800 shadow-sm transition-all">
+              Pickup Assignments
+            </button>
+            <button type="button" onclick="switchAdminSubtab('collectors')" id="admin-tab-btn-collectors" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#4B6354] hover:text-[#1C2B22] transition-all">
+              Collector Verification
+            </button>
+            <button type="button" onclick="switchAdminSubtab('users')" id="admin-tab-btn-users" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#4B6354] hover:text-[#1C2B22] transition-all">
+              User Management
+            </button>
+            <button type="button" onclick="switchAdminSubtab('centres')" id="admin-tab-btn-centres" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#4B6354] hover:text-[#1C2B22] transition-all">
+              Collection Centres
+            </button>
+            <button type="button" onclick="switchAdminSubtab('audit')" id="admin-tab-btn-audit" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#4B6354] hover:text-[#1C2B22] transition-all">
+              Statutory Audit Trail
+            </button>
+          </div>
+
+          <!-- SUBVIEW 1: Pickup Assignments & Management -->
+          <div id="admin-subview-pickups" class="space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 class="font-bold text-sm text-[#1C2B22]">Pickup Logistics &amp; Dispatch</h3>
+                <p class="text-xs text-[#4B6354]">Assign verified collection partners to doorstep requests</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <input type="text" id="admin-pickup-search-input" onkeyup="handleAdminPickupSearch()" placeholder="Search ref, citizen, area..." class="px-3 py-1.5 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+                <select id="admin-pickup-status-filter" onchange="loadAdminPickups(1)" class="px-3 py-1.5 rounded-xl border border-[#E2EBE4] text-xs bg-white focus:outline-none focus:ring-1 focus:ring-emerald-600">
+                  <option value="">All Statuses</option>
+                  <option value="PENDING" selected>Pending Assignment</option>
+                  <option value="ASSIGNED">Assigned</option>
+                  <option value="ACCEPTED">Accepted</option>
+                  <option value="COLLECTED">Collected</option>
+                  <option value="DELIVERED_TO_RECYCLER">Delivered to Recycler</option>
+                  <option value="COMPLETED">Completed</option>
+                  <option value="CANCELLED">Cancelled</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="border border-[#E2EBE4] rounded-xl overflow-hidden bg-white shadow-sm overflow-x-auto">
+              <table class="w-full text-left text-xs min-w-[700px]">
                 <thead class="bg-[#F5F7F0] border-b border-[#E2EBE4] text-[#4B6354]">
                   <tr>
                     <th class="p-3">Ref ID</th>
-                    <th class="p-3">Citizen</th>
-                    <th class="p-3">Locality</th>
-                    <th class="p-3">Items</th>
-                    <th class="p-3">Action</th>
+                    <th class="p-3">Citizen Contact</th>
+                    <th class="p-3">Address &amp; Locality</th>
+                    <th class="p-3">Items Manifest</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3">Collector Assignment</th>
+                    <th class="p-3">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="admin-pending-pickups-body" class="divide-y divide-[#E2EBE4]"></tbody>
               </table>
             </div>
+
+            <!-- Pagination -->
+            <div id="admin-pickups-pagination" class="flex items-center justify-between text-xs text-[#4B6354] pt-1"></div>
           </div>
 
-          <!-- Section: Collector Verification Queue -->
-          <div class="space-y-3">
-            <h3 class="font-bold text-sm text-[#1C2B22]">Collector Partner Verification</h3>
-            <div class="p-4 rounded-xl border border-[#E2EBE4] bg-[#F5F7F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <!-- SUBVIEW 2: Collector Verification & Fleet Audits -->
+          <div id="admin-subview-collectors" class="space-y-3 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <div class="flex items-center gap-2">
-                  <span class="font-bold text-sm text-[#1C2B22]">GreenCycle Logistics Inc.</span>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">Pending Review</span>
-                </div>
-                <p class="text-xs text-[#4B6354] mt-0.5">License: ECO-FLEET-2026-881 • Submitted: R2v3 &amp; ISO 14001 Audits</p>
+                <h3 class="font-bold text-sm text-[#1C2B22]">Collector Partner Verification &amp; Fleet Compliance</h3>
+                <p class="text-xs text-[#4B6354]">Audit and authorize e-waste handling licenses</p>
               </div>
               <div class="flex items-center gap-2">
-                <button type="button" onclick="showToast('Collector verified & badge activated!', 'success')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm">
-                  Approve &amp; Verify
-                </button>
-                <button type="button" onclick="showToast('Application sent for further document check', 'info')" class="px-3 py-1.5 rounded-lg bg-white border border-[#E2EBE4] text-[#4B6354] hover:bg-slate-100 text-xs font-bold">
-                  Review Files
+                <input type="text" id="admin-collector-search-input" onkeyup="filterAdminCollectors()" placeholder="Search partner, operator..." class="px-3 py-1.5 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+                <select id="admin-collector-status-filter" onchange="filterAdminCollectors()" class="px-3 py-1.5 rounded-xl border border-[#E2EBE4] text-xs bg-white focus:outline-none">
+                  <option value="">All Statuses</option>
+                  <option value="PENDING">Pending Review</option>
+                  <option value="VERIFIED">Verified Partners</option>
+                  <option value="REJECTED">Rejected</option>
+                </select>
+              </div>
+            </div>
+            <div id="admin-collectors-list" class="space-y-2"></div>
+          </div>
+
+          <!-- SUBVIEW 3: User Management & Admin Provisioning -->
+          <div id="admin-subview-users" class="space-y-3 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 class="font-bold text-sm text-[#1C2B22]">Platform User Management</h3>
+                <p class="text-xs text-[#4B6354]">Registered citizens, collector operators, and administrators</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <input type="text" id="admin-user-search-input" onkeyup="handleAdminUserSearch()" placeholder="Search user by name, email..." class="px-3 py-1.5 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+                <select id="admin-user-role-filter" onchange="loadAdminUsers(1)" class="px-3 py-1.5 rounded-xl border border-[#E2EBE4] text-xs bg-white focus:outline-none">
+                  <option value="">All Roles</option>
+                  <option value="CITIZEN">Citizens</option>
+                  <option value="COLLECTOR">Collectors</option>
+                  <option value="ADMIN">Administrators</option>
+                </select>
+                <button type="button" onclick="openProvisionAdminModal()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 shadow-sm whitespace-nowrap">
+                  <span class="material-symbols-outlined text-sm">person_add</span>
+                  <span>Provision Admin</span>
                 </button>
               </div>
             </div>
+
+            <div class="border border-[#E2EBE4] rounded-xl overflow-hidden bg-white shadow-sm overflow-x-auto">
+              <table class="w-full text-left text-xs min-w-[650px]">
+                <thead class="bg-[#F5F7F0] border-b border-[#E2EBE4] text-[#4B6354]">
+                  <tr>
+                    <th class="p-3">User ID</th>
+                    <th class="p-3">Full Name</th>
+                    <th class="p-3">Email Address</th>
+                    <th class="p-3">Mobile</th>
+                    <th class="p-3">Role</th>
+                    <th class="p-3">Registered Date</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-table-body" class="divide-y divide-[#E2EBE4]"></tbody>
+              </table>
+            </div>
+            <div id="admin-users-pagination" class="flex items-center justify-between text-xs text-[#4B6354] pt-1"></div>
           </div>
 
+          <!-- SUBVIEW 4: Collection Centres Management -->
+          <div id="admin-subview-centres" class="space-y-3 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 class="font-bold text-sm text-[#1C2B22]">Certified Collection Centres Directory</h3>
+                <p class="text-xs text-[#4B6354]">Manage authorized kiosks, drop-off terminals, and smelter vaults</p>
+              </div>
+              <button type="button" onclick="openAddCentreModal()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 shadow-sm">
+                <span class="material-symbols-outlined text-sm">add_location</span>
+                <span>Add New Centre</span>
+              </button>
+            </div>
+
+            <div class="border border-[#E2EBE4] rounded-xl overflow-hidden bg-white shadow-sm overflow-x-auto">
+              <table class="w-full text-left text-xs min-w-[700px]">
+                <thead class="bg-[#F5F7F0] border-b border-[#E2EBE4] text-[#4B6354]">
+                  <tr>
+                    <th class="p-3">Centre Name</th>
+                    <th class="p-3">Address</th>
+                    <th class="p-3">Coordinates</th>
+                    <th class="p-3">Contact</th>
+                    <th class="p-3">Accepted Waste Streams</th>
+                    <th class="p-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-centres-table-body" class="divide-y divide-[#E2EBE4]"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- SUBVIEW 5: Statutory Chain-of-Custody Audit Trail -->
+          <div id="admin-subview-audit" class="space-y-3 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 class="font-bold text-sm text-[#1C2B22]">Statutory Chain-of-Custody Audit Trail</h3>
+                <p class="text-xs text-[#4B6354]">Immutable state transition ledger complying with e-waste guidelines</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <input type="text" id="admin-audit-search-input" onkeyup="loadAdminAudit()" placeholder="Filter by Ref ID (e.g. EC-9041)..." class="px-3 py-1.5 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+                <button type="button" onclick="loadAdminAudit()" class="px-3 py-1.5 rounded-xl bg-white border border-[#E2EBE4] text-xs font-bold text-[#1C2B22] hover:bg-slate-50">
+                  Refresh
+                </button>
+              </div>
+            </div>
+
+            <div class="border border-[#E2EBE4] rounded-xl overflow-hidden bg-white shadow-sm overflow-x-auto">
+              <table class="w-full text-left text-xs min-w-[750px]">
+                <thead class="bg-[#F5F7F0] border-b border-[#E2EBE4] text-[#4B6354]">
+                  <tr>
+                    <th class="p-3">Timestamp</th>
+                    <th class="p-3">Pickup Ref</th>
+                    <th class="p-3">Previous State</th>
+                    <th class="p-3">New State</th>
+                    <th class="p-3">Changed By</th>
+                    <th class="p-3">Reason / Audit Note</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-audit-table-body" class="divide-y divide-[#E2EBE4]"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -2139,8 +2289,7 @@
     </div>
   </div>
 
-  
-<!-- =========================================================================
+  <!-- =========================================================================
        5. LIVE TRACKING MODAL (WITH INTERACTIVE STEPS)
        ========================================================================= -->
   <div id="tracking-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="tracking-title">
@@ -2272,7 +2421,205 @@
   </div>
 
   
-<!-- =========================================================================
+
+  <!-- =========================================================================
+       PICKUP DETAILS REVIEW MODAL (FOR COLLECTOR & ADMIN AUDITS)
+       ========================================================================= -->
+  <div id="pickup-details-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="details-modal-title">
+    <div class="bg-white border border-[#E2EBE4] rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
+      <div class="p-5 bg-[#FAFAF5] border-b border-[#E2EBE4] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700">
+            <span class="material-symbols-outlined text-lg">description</span>
+          </div>
+          <div>
+            <h2 id="details-modal-title" class="font-headline-md font-bold text-[#1C2B22]">Pickup Review &amp; Custody Details</h2>
+            <p id="details-modal-subtitle" class="text-xs text-[#4B6354]">Official Collection Manifest</p>
+          </div>
+        </div>
+        <button type="button" onclick="closePickupDetailsModal()" class="p-2 text-[#4B6354] hover:text-[#1C2B22] rounded-lg hover:bg-emerald-50">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+        <!-- Customer & Location Card -->
+        <div class="p-4 rounded-xl bg-[#F5F7F0] border border-[#E2EBE4] space-y-2">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[10px] font-bold text-[#4B6354] uppercase tracking-wider">Citizen Partner</span>
+              <p id="details-citizen-name" class="font-bold text-sm text-[#1C2B22]">--</p>
+              <p id="details-citizen-phone" class="text-[#4B6354]">Phone: --</p>
+            </div>
+            <span id="details-status-badge" class="px-2.5 py-1 rounded-full font-bold text-[10px] bg-emerald-100 text-emerald-800">PENDING</span>
+          </div>
+          <div class="pt-2 border-t border-[#E2EBE4]">
+            <span class="text-[10px] font-bold text-[#4B6354] uppercase tracking-wider">Collection Location</span>
+            <p id="details-address" class="text-[#1C2B22] font-medium">--</p>
+            <p id="details-locality" class="text-[#4B6354]">--</p>
+          </div>
+          <div class="pt-2 border-t border-[#E2EBE4] flex justify-between items-center">
+            <span>Preferred Window: <strong id="details-timeslot" class="text-[#1C2B22]">--</strong></span>
+            <a id="details-map-link" href="#" target="_blank" rel="noopener" class="text-emerald-700 font-bold hover:underline flex items-center gap-1">
+              <span>Navigate via Google Maps</span>
+              <span class="material-symbols-outlined text-xs">open_in_new</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Manifest Items Table -->
+        <div class="space-y-2">
+          <h4 class="font-bold text-xs text-[#1C2B22] uppercase tracking-wider">Scrap Manifest Items</h4>
+          <div class="border border-[#E2EBE4] rounded-xl overflow-hidden bg-white">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-[#F5F7F0] border-b border-[#E2EBE4] text-[#4B6354]">
+                <tr>
+                  <th class="p-2.5">Category</th>
+                  <th class="p-2.5">Quantity</th>
+                  <th class="p-2.5">Est. Weight</th>
+                  <th class="p-2.5">Notes</th>
+                </tr>
+              </thead>
+              <tbody id="details-items-body" class="divide-y divide-[#E2EBE4]"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Immutable Audit Trail Timeline -->
+        <div class="space-y-2">
+          <h4 class="font-bold text-xs text-[#1C2B22] uppercase tracking-wider">Chain-of-Custody Timeline</h4>
+          <div id="details-timeline" class="space-y-2 border-l-2 border-emerald-500 pl-3"></div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-[#FAFAF5] border-t border-[#E2EBE4] flex justify-end">
+        <button type="button" onclick="closePickupDetailsModal()" class="px-5 py-2 rounded-xl bg-white border border-[#E2EBE4] text-[#1C2B22] font-bold text-xs hover:bg-slate-50">
+          Close Review
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       ADMIN SECURE PROVISIONING MODAL
+       ========================================================================= -->
+  <div id="provision-admin-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="provision-modal-title">
+    <div class="bg-white border border-[#E2EBE4] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
+      <div class="p-5 bg-[#FAFAF5] border-b border-[#E2EBE4] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700">
+            <span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+          </div>
+          <div>
+            <h2 id="provision-modal-title" class="font-headline-md font-bold text-[#1C2B22]">Provision Administrator</h2>
+            <p class="text-xs text-[#4B6354]">Authorizes full platform operator rights</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeProvisionAdminModal()" class="p-2 text-[#4B6354] hover:text-[#1C2B22] rounded-lg hover:bg-emerald-50">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <form onsubmit="handleProvisionAdmin(event)" class="p-6 space-y-3">
+        <div>
+          <label for="prov-name" class="block text-xs font-bold text-[#1C2B22] mb-1">Full Legal Name *</label>
+          <input id="prov-name" type="text" required placeholder="Elena Rostova" class="w-full px-3 py-2 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+        </div>
+        <div>
+          <label for="prov-email" class="block text-xs font-bold text-[#1C2B22] mb-1">Official Email Address *</label>
+          <input id="prov-email" type="email" required placeholder="elena.admin@ecocircuit.org" class="w-full px-3 py-2 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+        </div>
+        <div>
+          <label for="prov-phone" class="block text-xs font-bold text-[#1C2B22] mb-1">Authorized Mobile Number *</label>
+          <input id="prov-phone" type="tel" required placeholder="9876500099" class="w-full px-3 py-2 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+        </div>
+        <div>
+          <label for="prov-password" class="block text-xs font-bold text-[#1C2B22] mb-1">Temporary Master Password *</label>
+          <input id="prov-password" type="password" required minlength="8" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+        </div>
+
+        <p id="prov-error" class="text-xs text-rose-600 font-semibold hidden"></p>
+
+        <div class="pt-3 flex gap-2">
+          <button type="button" onclick="closeProvisionAdminModal()" class="flex-1 py-2 rounded-xl bg-white border border-[#E2EBE4] text-[#4B6354] font-bold text-xs">
+            Cancel
+          </button>
+          <button id="prov-submit-btn" type="submit" class="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm">
+            Authorize Administrator
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       ADD COLLECTION CENTRE MODAL
+       ========================================================================= -->
+  <div id="add-centre-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="centre-modal-title">
+    <div class="bg-white border border-[#E2EBE4] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
+      <div class="p-5 bg-[#FAFAF5] border-b border-[#E2EBE4] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700">
+            <span class="material-symbols-outlined text-lg">add_location_alt</span>
+          </div>
+          <div>
+            <h2 id="centre-modal-title" class="font-headline-md font-bold text-[#1C2B22]">Add Collection Centre</h2>
+            <p class="text-xs text-[#4B6354]">Register new drop kiosk or certified recycling hub</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAddCentreModal()" class="p-2 text-[#4B6354] hover:text-[#1C2B22] rounded-lg hover:bg-emerald-50">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <form onsubmit="handleAddCentre(event)" class="p-6 space-y-3">
+        <div>
+          <label for="centre-name" class="block text-xs font-bold text-[#1C2B22] mb-1">Centre / Kiosk Name *</label>
+          <input id="centre-name" type="text" required placeholder="EcoCircuit TechPark Kiosk #05" class="w-full px-3 py-2 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+        </div>
+        <div>
+          <label for="centre-address" class="block text-xs font-bold text-[#1C2B22] mb-1">Physical Address *</label>
+          <input id="centre-address" type="text" required placeholder="Gate 4, Manyata Embassy Business Park, Nagavara, Bengaluru" class="w-full px-3 py-2 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="centre-lat" class="block text-xs font-bold text-[#1C2B22] mb-1">Latitude *</label>
+            <input id="centre-lat" type="number" step="any" required placeholder="13.0458" class="w-full px-3 py-2 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+          </div>
+          <div>
+            <label for="centre-lng" class="block text-xs font-bold text-[#1C2B22] mb-1">Longitude *</label>
+            <input id="centre-lng" type="number" step="any" required placeholder="77.6212" class="w-full px-3 py-2 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+          </div>
+        </div>
+        <div>
+          <label for="centre-contact" class="block text-xs font-bold text-[#1C2B22] mb-1">Operating Contact / Hotline *</label>
+          <input id="centre-contact" type="text" required placeholder="+91 80 4433 2211" class="w-full px-3 py-2 rounded-xl border border-[#E2EBE4] text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-[#1C2B22] mb-1">Accepted Waste Categories</label>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <label class="flex items-center gap-1.5"><input type="checkbox" name="acceptedWaste" value="Mobile Phones" checked class="rounded text-emerald-600"/> Mobile Phones</label>
+            <label class="flex items-center gap-1.5"><input type="checkbox" name="acceptedWaste" value="Laptops" checked class="rounded text-emerald-600"/> Laptops</label>
+            <label class="flex items-center gap-1.5"><input type="checkbox" name="acceptedWaste" value="Batteries" checked class="rounded text-emerald-600"/> Batteries</label>
+            <label class="flex items-center gap-1.5"><input type="checkbox" name="acceptedWaste" value="Chargers" checked class="rounded text-emerald-600"/> Chargers &amp; Cables</label>
+            <label class="flex items-center gap-1.5"><input type="checkbox" name="acceptedWaste" value="Televisions" class="rounded text-emerald-600"/> Televisions</label>
+            <label class="flex items-center gap-1.5"><input type="checkbox" name="acceptedWaste" value="Home Appliances" class="rounded text-emerald-600"/> Appliances</label>
+          </div>
+        </div>
+
+        <div class="pt-3 flex gap-2">
+          <button type="button" onclick="closeAddCentreModal()" class="flex-1 py-2 rounded-xl bg-white border border-[#E2EBE4] text-[#4B6354] font-bold text-xs">
+            Cancel
+          </button>
+          <button id="centre-submit-btn" type="submit" class="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm">
+            Save Collection Centre
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
        9. FLOATING TOAST NOTIFICATION CONTAINER
        ========================================================================= -->
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
@@ -2695,6 +3042,624 @@
         }
       } else {
         updateHeaderAuthState();
+      }
+    }
+
+    
+    // =========================================================================
+    // COLLECTOR & ADMINISTRATOR PORTAL CONTROLLERS
+    // =========================================================================
+
+    // --- Collector Sub-Tabs & Modal Review Handlers ---
+    function switchCollectorSubtab(tab) {
+      const btnAssigned = document.getElementById('col-subtab-btn-assigned');
+      const btnHistory = document.getElementById('col-subtab-btn-history');
+      const viewAssigned = document.getElementById('collector-subview-assigned');
+      const viewHistory = document.getElementById('collector-subview-history');
+
+      if (tab === 'assigned') {
+        if (btnAssigned) btnAssigned.className = 'px-4 py-2 text-xs font-bold text-emerald-800 border-b-2 border-emerald-600 bg-white';
+        if (btnHistory) btnHistory.className = 'px-4 py-2 text-xs font-semibold text-[#4B6354] hover:text-[#1C2B22]';
+        if (viewAssigned) viewAssigned.classList.remove('hidden');
+        if (viewHistory) viewHistory.classList.add('hidden');
+      } else {
+        if (btnAssigned) btnAssigned.className = 'px-4 py-2 text-xs font-semibold text-[#4B6354] hover:text-[#1C2B22]';
+        if (btnHistory) btnHistory.className = 'px-4 py-2 text-xs font-bold text-emerald-800 border-b-2 border-emerald-600 bg-white';
+        if (viewAssigned) viewAssigned.classList.add('hidden');
+        if (viewHistory) viewHistory.classList.remove('hidden');
+      }
+    }
+
+    async function openPickupDetailsModal(id) {
+      const modal = document.getElementById('pickup-details-modal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+
+      document.getElementById('details-modal-subtitle').textContent = `Official Collection Manifest #${id}`;
+      document.getElementById('details-citizen-name').textContent = 'Loading details...';
+      document.getElementById('details-citizen-phone').textContent = 'Phone: ...';
+      document.getElementById('details-address').textContent = '...';
+      document.getElementById('details-locality').textContent = '...';
+      document.getElementById('details-timeslot').textContent = '...';
+      document.getElementById('details-status-badge').textContent = '...';
+      document.getElementById('details-items-body').innerHTML = `<tr><td colspan="4" class="p-3 text-center text-xs text-[#4B6354]"><span class="inline-block animate-spin mr-1">◌</span> Fetching manifest...</td></tr>`;
+      document.getElementById('details-timeline').innerHTML = '';
+
+      try {
+        let headers = {};
+        if (AppState.token) headers['Authorization'] = `Bearer ${AppState.token}`;
+        const res = await fetch(`/api/collector/pickups/${id}`, { headers });
+        const data = await res.json();
+
+        if (data.success && data.data) {
+          const p = data.data;
+          document.getElementById('details-citizen-name').textContent = p.citizenName || 'Registered Citizen Partner';
+          document.getElementById('details-citizen-phone').innerHTML = `Phone: <a href="tel:${p.citizenPhone}" class="text-emerald-700 font-bold hover:underline">${p.citizenPhone || 'N/A'}</a>`;
+          document.getElementById('details-address').textContent = p.pickupAddress || 'Address on file';
+          document.getElementById('details-locality').textContent = `${p.locality} (PIN: ${p.pincode})`;
+          document.getElementById('details-timeslot').textContent = `${new Date(p.preferredDate).toLocaleDateString()} • ${p.preferredTimeSlot}`;
+          document.getElementById('details-status-badge').textContent = p.currentStatus;
+          document.getElementById('details-map-link').href = `https://maps.google.com/?q=${encodeURIComponent(p.pickupAddress + ', ' + p.locality + ', ' + p.pincode)}`;
+
+          // Manifest items
+          const itemsBody = document.getElementById('details-items-body');
+          if (itemsBody) {
+            itemsBody.innerHTML = (p.items || []).map(it => `
+              <tr class="hover:bg-slate-50">
+                <td class="p-2.5 font-bold text-[#1C2B22]">${it.wasteCategoryId.replace('cat-', '').toUpperCase()}</td>
+                <td class="p-2.5 font-medium">${it.quantity} unit(s)</td>
+                <td class="p-2.5">${(it.estimatedWeight || 0.5) * (it.quantity || 1)} kg</td>
+                <td class="p-2.5 text-[#4B6354]">${it.description || 'Verified scrap item'}</td>
+              </tr>
+            `).join('');
+          }
+
+          // Status history timeline
+          const timelineEl = document.getElementById('details-timeline');
+          if (timelineEl) {
+            timelineEl.innerHTML = (p.statusHistory || []).map(h => `
+              <div class="relative pb-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                  <strong class="text-xs text-[#1C2B22]">${h.newStatus}</strong>
+                  <span class="text-[10px] text-[#4B6354]">${new Date(h.timestamp).toLocaleString()}</span>
+                </div>
+                <p class="text-[11px] text-[#4B6354] mt-0.5 ml-4">${h.reason || 'Status recorded in ledger'}</p>
+              </div>
+            `).join('');
+          }
+        } else {
+          showToast(data.error || 'Failed to load pickup details.', 'error');
+        }
+      } catch (err) {
+        showToast('Error communicating with backend.', 'error');
+      }
+    }
+
+    function closePickupDetailsModal() {
+      document.getElementById('pickup-details-modal')?.classList.add('hidden');
+    }
+
+    // --- Administrator Sub-Tabs & View Controllers ---
+    let currentAdminPickupsPage = 1;
+    let currentAdminUsersPage = 1;
+    let adminPickupsSearchTimer = null;
+    let adminUsersSearchTimer = null;
+
+    function switchAdminSubtab(tab) {
+      const tabs = ['pickups', 'collectors', 'users', 'centres', 'audit'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`admin-tab-btn-${t}`);
+        const subview = document.getElementById(`admin-subview-${t}`);
+        if (t === tab) {
+          if (btn) btn.className = 'px-3.5 py-2 rounded-lg text-xs font-bold bg-white text-emerald-800 shadow-sm transition-all';
+          if (subview) subview.classList.remove('hidden');
+        } else {
+          if (btn) btn.className = 'px-3.5 py-2 rounded-lg text-xs font-semibold text-[#4B6354] hover:text-[#1C2B22] transition-all';
+          if (subview) subview.classList.add('hidden');
+        }
+      });
+
+      if (tab === 'pickups') loadAdminPickups(1);
+      if (tab === 'collectors') filterAdminCollectors();
+      if (tab === 'users') loadAdminUsers(1);
+      if (tab === 'centres') loadAdminCentres();
+      if (tab === 'audit') loadAdminAudit();
+    }
+
+    async function loadAdminPickups(page = 1) {
+      currentAdminPickupsPage = page;
+      const tbody = document.getElementById('admin-pending-pickups-body');
+      const pagination = document.getElementById('admin-pickups-pagination');
+      if (!tbody) return;
+
+      const status = document.getElementById('admin-pickup-status-filter')?.value || '';
+      const search = document.getElementById('admin-pickup-search-input')?.value.trim() || '';
+
+      tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-xs text-[#4B6354]"><span class="inline-block animate-spin mr-1">◌</span> Querying database records...</td></tr>`;
+
+      try {
+        const params = new URLSearchParams({ page, limit: 10 });
+        if (status) params.append('status', status);
+        if (search) params.append('search', search);
+
+        const res = await fetch(`/api/admin/pickups?${params.toString()}`, {
+          headers: { Authorization: `Bearer ${AppState.token}` }
+        });
+        const data = await res.json();
+
+        if (data.success && Array.isArray(data.data)) {
+          if (data.data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-xs text-[#4B6354]">No pickup requests matching the filter criteria.</td></tr>`;
+            if (pagination) pagination.innerHTML = `<span>Total matching: 0</span>`;
+            return;
+          }
+
+          if (!AppState.verifiedCollectorsCache.length) {
+            const colRes = await fetch('/api/admin/collectors', { headers: { Authorization: `Bearer ${AppState.token}` } });
+            const colData = await colRes.json();
+            if (colData.success) {
+              AppState.verifiedCollectorsCache = colData.data.filter(c => c.verificationStatus === 'VERIFIED');
+            }
+          }
+
+          const collectorOptions = AppState.verifiedCollectorsCache.map(c => `
+            <option value="${c.id}">${c.businessName} (${c.name})</option>
+          `).join('');
+
+          const statusStyles = {
+            PENDING: 'bg-amber-100 text-amber-800',
+            ASSIGNED: 'bg-blue-100 text-blue-800',
+            ACCEPTED: 'bg-indigo-100 text-indigo-800',
+            COLLECTED: 'bg-emerald-100 text-emerald-800',
+            DELIVERED_TO_RECYCLER: 'bg-purple-100 text-purple-800',
+            COMPLETED: 'bg-emerald-800 text-white',
+            CANCELLED: 'bg-slate-200 text-slate-700',
+            FAILED: 'bg-rose-100 text-rose-800'
+          };
+
+          tbody.innerHTML = data.data.map(p => {
+            const itemsStr = (p.items || []).map(i => `${i.quantity}x ${i.wasteCategoryId.replace('cat-', '')}`).join(', ');
+            const isPending = p.currentStatus === 'PENDING';
+            const isCancelable = ['PENDING', 'ASSIGNED', 'ACCEPTED'].includes(p.currentStatus);
+
+            return `
+              <tr class="hover:bg-slate-50 transition-colors">
+                <td class="p-3 font-bold text-[#1C2B22]">${p.id}</td>
+                <td class="p-3">
+                  <span class="font-bold text-[#1C2B22] block">${p.citizenName || 'Citizen'}</span>
+                  <span class="text-[11px] text-[#4B6354]">${p.citizenPhone || ''}</span>
+                </td>
+                <td class="p-3 text-[11px] text-[#4B6354]">
+                  <span class="font-medium text-[#1C2B22] block">${p.locality} (${p.pincode})</span>
+                  <span class="truncate max-w-[180px] block">${p.pickupAddress}</span>
+                </td>
+                <td class="p-3 font-medium text-[11px]">${itemsStr || 'Scrap Items'}</td>
+                <td class="p-3">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${statusStyles[p.currentStatus] || 'bg-slate-100'}">
+                    ${p.currentStatus}
+                  </span>
+                </td>
+                <td class="p-3">
+                  ${isPending ? `
+                    <div class="flex items-center gap-1.5">
+                      <select id="collector-sel-${p.id}" class="text-xs bg-white border border-[#E2EBE4] rounded-lg p-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-600 max-w-[140px]">
+                        <option value="">Assign...</option>
+                        ${collectorOptions}
+                      </select>
+                      <button type="button" onclick="assignPickupToCollector('${p.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm whitespace-nowrap">
+                        Assign
+                      </button>
+                    </div>
+                  ` : `
+                    <span class="text-xs text-[#1C2B22] font-semibold">${p.collectorName || 'Assigned'}</span>
+                  `}
+                </td>
+                <td class="p-3">
+                  <div class="flex items-center gap-2">
+                    <button type="button" onclick="openPickupDetailsModal('${p.id}')" class="text-xs font-bold text-emerald-700 hover:underline">Review</button>
+                    ${isCancelable ? `<button type="button" onclick="confirmCancelPickupByAdmin('${p.id}')" class="text-xs font-bold text-rose-600 hover:underline">Cancel</button>` : ''}
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+
+          if (pagination) {
+            pagination.innerHTML = `
+              <span>Showing page ${data.page} of ${data.totalPages} (${data.total} total records)</span>
+              <div class="flex gap-1">
+                <button type="button" ${data.page <= 1 ? 'disabled class="opacity-40 cursor-not-allowed px-2.5 py-1 bg-white border border-[#E2EBE4] rounded-lg"' : `onclick="loadAdminPickups(${data.page - 1})" class="px-2.5 py-1 bg-white border border-[#E2EBE4] hover:bg-emerald-50 rounded-lg font-bold"`}>Prev</button>
+                <button type="button" ${data.page >= data.totalPages ? 'disabled class="opacity-40 cursor-not-allowed px-2.5 py-1 bg-white border border-[#E2EBE4] rounded-lg"' : `onclick="loadAdminPickups(${data.page + 1})" class="px-2.5 py-1 bg-white border border-[#E2EBE4] hover:bg-emerald-50 rounded-lg font-bold"`}>Next</button>
+              </div>
+            `;
+          }
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-xs text-rose-600">Failed to load pickup requests from backend database.</td></tr>`;
+      }
+    }
+
+    function handleAdminPickupSearch() {
+      clearTimeout(adminPickupsSearchTimer);
+      adminPickupsSearchTimer = setTimeout(() => {
+        loadAdminPickups(1);
+      }, 300);
+    }
+
+    function confirmCancelPickupByAdmin(id) {
+      openConfirmDialog({
+        title: `Cancel Pickup Request #${id}`,
+        desc: `Are you sure you want to cancel pickup #${id} as Platform Administrator? This state change will be immutably recorded in the statutory audit log.`,
+        onConfirm: async () => {
+          try {
+            const res = await fetch(`/api/pickups/${id}/cancel`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${AppState.token}`
+              },
+              body: JSON.stringify({ reason: 'Administrative cancellation by Platform Operator' })
+            });
+            const data = await res.json();
+            if (data.success) {
+              showToast(`Pickup #${id} cancelled by Administrator.`, 'info');
+              loadAdminPickups(currentAdminPickupsPage);
+            } else {
+              showToast(data.error || 'Failed to cancel pickup.', 'error');
+            }
+          } catch (e) {
+            showToast('Error communicating with backend.', 'error');
+          }
+        }
+      });
+    }
+
+    async function filterAdminCollectors() {
+      const listEl = document.getElementById('admin-collectors-list');
+      if (!listEl) return;
+
+      const status = document.getElementById('admin-collector-status-filter')?.value || '';
+      const search = document.getElementById('admin-collector-search-input')?.value.trim().toLowerCase() || '';
+
+      listEl.innerHTML = `<div class="p-4 text-center text-xs text-[#4B6354]"><span class="inline-block animate-spin mr-1">◌</span> Querying collector partner registry...</div>`;
+
+      try {
+        const res = await fetch('/api/admin/collectors', {
+          headers: { Authorization: `Bearer ${AppState.token}` }
+        });
+        const data = await res.json();
+
+        if (data.success && Array.isArray(data.data)) {
+          let filtered = data.data;
+          if (status) filtered = filtered.filter(c => c.verificationStatus === status);
+          if (search) {
+            filtered = filtered.filter(c =>
+              c.businessName.toLowerCase().includes(search) ||
+              c.name.toLowerCase().includes(search) ||
+              c.email.toLowerCase().includes(search)
+            );
+          }
+
+          if (filtered.length === 0) {
+            listEl.innerHTML = `<div class="p-6 bg-white border border-[#E2EBE4] rounded-xl text-center text-xs text-[#4B6354]">No collector accounts found matching criteria.</div>`;
+            return;
+          }
+
+          listEl.innerHTML = filtered.map(c => {
+            const isPending = c.verificationStatus === 'PENDING';
+            const isVerified = c.verificationStatus === 'VERIFIED';
+            return `
+              <div class="p-4 rounded-xl border border-[#E2EBE4] bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm hover:shadow-md transition-shadow">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-sm text-[#1C2B22]">${c.businessName}</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isVerified ? 'bg-emerald-100 text-emerald-800' : (isPending ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800')}">
+                      ${c.verificationStatus}
+                    </span>
+                  </div>
+                  <p class="text-xs text-[#4B6354] mt-1">Operator: <strong>${c.name}</strong> • Email: ${c.email} • Phone: ${c.phone}</p>
+                  <p class="text-[11px] text-emerald-800 mt-0.5">Authorized Fleet Areas: ${(c.serviceAreas || []).join(', ') || 'All Sectors'}</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  ${isPending ? `
+                    <button type="button" onclick="verifyCollectorWithConfirm('${c.id}', 'VERIFIED')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm">
+                      Verify &amp; Authorize
+                    </button>
+                    <button type="button" onclick="verifyCollectorWithConfirm('${c.id}', 'REJECTED')" class="px-3.5 py-1.5 rounded-xl bg-white border border-[#E2EBE4] text-rose-600 hover:bg-rose-50 font-bold text-xs">
+                      Reject
+                    </button>
+                  ` : (isVerified ? `
+                    <span class="text-xs text-emerald-700 font-bold flex items-center gap-1">
+                      <span class="material-symbols-outlined text-sm">verified</span>
+                      <span>Certified Fleet Active</span>
+                    </span>
+                  ` : `
+                    <span class="text-xs text-rose-600 font-bold">Audit Rejected</span>
+                  `)}
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      } catch (err) {
+        listEl.innerHTML = `<div class="p-4 text-center text-xs text-rose-600">Failed to load collectors.</div>`;
+      }
+    }
+
+    function verifyCollectorWithConfirm(collectorId, status) {
+      openConfirmDialog({
+        title: status === 'VERIFIED' ? 'Verify Collector Partner' : 'Reject Collector Application',
+        desc: `Are you sure you want to mark this collector partner as ${status}? Verified collectors are authorized to accept and process live e-waste route dispatches.`,
+        onConfirm: async () => {
+          try {
+            const res = await fetch(`/api/admin/collectors/${collectorId}/verify`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${AppState.token}`
+              },
+              body: JSON.stringify({ verificationStatus: status })
+            });
+            const data = await res.json();
+            if (data.success) {
+              showToast(`Collector account marked as ${status}!`, 'success');
+              filterAdminCollectors();
+            } else {
+              showToast(data.error || 'Failed to update collector status.', 'error');
+            }
+          } catch (e) {
+            showToast('Error communicating with backend.', 'error');
+          }
+        }
+      });
+    }
+
+    async function loadAdminUsers(page = 1) {
+      currentAdminUsersPage = page;
+      const tbody = document.getElementById('admin-users-table-body');
+      const pagination = document.getElementById('admin-users-pagination');
+      if (!tbody) return;
+
+      const role = document.getElementById('admin-user-role-filter')?.value || '';
+      const search = document.getElementById('admin-user-search-input')?.value.trim() || '';
+
+      tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-[#4B6354]"><span class="inline-block animate-spin mr-1">◌</span> Querying user registry...</td></tr>`;
+
+      try {
+        const params = new URLSearchParams({ page, limit: 10 });
+        if (role) params.append('role', role);
+        if (search) params.append('search', search);
+
+        const res = await fetch(`/api/admin/users?${params.toString()}`, {
+          headers: { Authorization: `Bearer ${AppState.token}` }
+        });
+        const data = await res.json();
+
+        if (data.success && Array.isArray(data.data)) {
+          if (data.data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-[#4B6354]">No user records found.</td></tr>`;
+            if (pagination) pagination.innerHTML = `<span>Total matching: 0</span>`;
+            return;
+          }
+
+          const roleBadges = {
+            CITIZEN: 'bg-emerald-100 text-emerald-800',
+            COLLECTOR: 'bg-blue-100 text-blue-800',
+            ADMIN: 'bg-purple-100 text-purple-800'
+          };
+
+          tbody.innerHTML = data.data.map(u => `
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="p-3 font-mono text-[11px] text-[#4B6354]">${u.id}</td>
+              <td class="p-3 font-bold text-[#1C2B22]">${u.name}</td>
+              <td class="p-3 text-[#4B6354]">${u.email}</td>
+              <td class="p-3 text-[#4B6354]">${u.phone || 'N/A'}</td>
+              <td class="p-3">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${roleBadges[u.role] || 'bg-slate-100'}">
+                  ${u.role}
+                </span>
+              </td>
+              <td class="p-3 text-[11px] text-[#4B6354]">${new Date(u.createdAt).toLocaleDateString()}</td>
+            </tr>
+          `).join('');
+
+          if (pagination) {
+            pagination.innerHTML = `
+              <span>Showing page ${data.page} of ${data.totalPages} (${data.total} total accounts)</span>
+              <div class="flex gap-1">
+                <button type="button" ${data.page <= 1 ? 'disabled class="opacity-40 cursor-not-allowed px-2.5 py-1 bg-white border border-[#E2EBE4] rounded-lg"' : `onclick="loadAdminUsers(${data.page - 1})" class="px-2.5 py-1 bg-white border border-[#E2EBE4] hover:bg-emerald-50 rounded-lg font-bold"`}>Prev</button>
+                <button type="button" ${data.page >= data.totalPages ? 'disabled class="opacity-40 cursor-not-allowed px-2.5 py-1 bg-white border border-[#E2EBE4] rounded-lg"' : `onclick="loadAdminUsers(${data.page + 1})" class="px-2.5 py-1 bg-white border border-[#E2EBE4] hover:bg-emerald-50 rounded-lg font-bold"`}>Next</button>
+              </div>
+            `;
+          }
+        }
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-rose-600">Failed to query users from backend.</td></tr>`;
+      }
+    }
+
+    function handleAdminUserSearch() {
+      clearTimeout(adminUsersSearchTimer);
+      adminUsersSearchTimer = setTimeout(() => {
+        loadAdminUsers(1);
+      }, 300);
+    }
+
+    function openProvisionAdminModal() {
+      document.getElementById('provision-admin-modal')?.classList.remove('hidden');
+    }
+
+    function closeProvisionAdminModal() {
+      document.getElementById('provision-admin-modal')?.classList.add('hidden');
+    }
+
+    async function handleProvisionAdmin(e) {
+      e.preventDefault();
+      const name = document.getElementById('prov-name').value.trim();
+      const email = document.getElementById('prov-email').value.trim();
+      const phone = document.getElementById('prov-phone').value.trim();
+      const password = document.getElementById('prov-password').value;
+
+      const btn = document.getElementById('prov-submit-btn');
+      const errBox = document.getElementById('prov-error');
+
+      btn.disabled = true;
+      btn.textContent = 'Authorizing...';
+      errBox.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/admin/provision-admin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${AppState.token}`
+          },
+          body: JSON.stringify({ name, email, phone, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          showToast(`Administrator account provisioned for ${name}!`, 'success');
+          closeProvisionAdminModal();
+          loadAdminUsers(1);
+        } else {
+          errBox.textContent = data.error || (data.details ? data.details[0].message : 'Provisioning failed.');
+          errBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        errBox.textContent = 'Network or server error during administrator provisioning.';
+        errBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Authorize Administrator';
+      }
+    }
+
+    async function loadAdminCentres() {
+      const tbody = document.getElementById('admin-centres-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-[#4B6354]"><span class="inline-block animate-spin mr-1">◌</span> Querying collection hubs...</td></tr>`;
+
+      try {
+        const res = await fetch('/api/admin/collection-centres', {
+          headers: { Authorization: `Bearer ${AppState.token}` }
+        });
+        const data = await res.json();
+
+        if (data.success && Array.isArray(data.data)) {
+          tbody.innerHTML = data.data.map(c => `
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="p-3 font-bold text-[#1C2B22]">${c.name}</td>
+              <td class="p-3 text-[#4B6354]">${c.address}</td>
+              <td class="p-3 font-mono text-[11px] text-[#4B6354]">${c.latitude.toFixed(4)}, ${c.longitude.toFixed(4)}</td>
+              <td class="p-3 text-[#4B6354]">${c.contactDetails || 'N/A'}</td>
+              <td class="p-3 text-[11px] text-emerald-800 font-medium">${(c.acceptedWasteCategories || []).slice(0, 3).join(', ')}...</td>
+              <td class="p-3">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                  ${c.verificationStatus}
+                </span>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-rose-600">Failed to load collection centres.</td></tr>`;
+      }
+    }
+
+    function openAddCentreModal() {
+      document.getElementById('add-centre-modal')?.classList.remove('hidden');
+    }
+
+    function closeAddCentreModal() {
+      document.getElementById('add-centre-modal')?.classList.add('hidden');
+    }
+
+    async function handleAddCentre(e) {
+      e.preventDefault();
+      const name = document.getElementById('centre-name').value.trim();
+      const address = document.getElementById('centre-address').value.trim();
+      const latitude = parseFloat(document.getElementById('centre-lat').value);
+      const longitude = parseFloat(document.getElementById('centre-lng').value);
+      const contactDetails = document.getElementById('centre-contact').value.trim();
+
+      const selectedBoxes = Array.from(document.querySelectorAll('input[name="acceptedWaste"]:checked'));
+      const acceptedWasteCategories = selectedBoxes.map(b => b.value);
+
+      const btn = document.getElementById('centre-submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      try {
+        const res = await fetch('/api/admin/collection-centres', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${AppState.token}`
+          },
+          body: JSON.stringify({
+            name,
+            address,
+            latitude,
+            longitude,
+            contactDetails,
+            acceptedWasteCategories
+          })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          showToast('Collection centre registered successfully!', 'success');
+          closeAddCentreModal();
+          loadAdminCentres();
+        } else {
+          showToast(data.error || 'Failed to save centre.', 'error');
+        }
+      } catch (err) {
+        showToast('Communication error with server.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Collection Centre';
+      }
+    }
+
+    async function loadAdminAudit() {
+      const tbody = document.getElementById('admin-audit-table-body');
+      if (!tbody) return;
+
+      const pickupId = document.getElementById('admin-audit-search-input')?.value.trim() || '';
+      tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-[#4B6354]"><span class="inline-block animate-spin mr-1">◌</span> Querying statutory chain-of-custody ledger...</td></tr>`;
+
+      try {
+        const params = new URLSearchParams({ limit: 50 });
+        if (pickupId) params.append('pickupId', pickupId);
+
+        const res = await fetch(`/api/admin/audit-trail?${params.toString()}`, {
+          headers: { Authorization: `Bearer ${AppState.token}` }
+        });
+        const data = await res.json();
+
+        if (data.success && Array.isArray(data.data)) {
+          if (data.data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-[#4B6354]">No audit records found matching reference ID.</td></tr>`;
+            return;
+          }
+
+          tbody.innerHTML = data.data.map(h => `
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="p-3 text-[11px] text-[#4B6354] whitespace-nowrap">${new Date(h.timestamp).toLocaleString()}</td>
+              <td class="p-3 font-bold text-[#1C2B22]">${h.pickupRequestId}</td>
+              <td class="p-3 text-[11px] text-[#4B6354]">${h.previousStatus || '—'}</td>
+              <td class="p-3 font-bold text-xs text-emerald-800">${h.newStatus}</td>
+              <td class="p-3 font-mono text-[10px] text-[#4B6354]">${h.changedBy || 'SYSTEM'}</td>
+              <td class="p-3 text-xs text-[#4B6354]">${h.reason || 'Status updated'}</td>
+            </tr>
+          `).join('');
+        }
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-xs text-rose-600">Failed to query audit trail.</td></tr>`;
       }
     }
 
@@ -3633,6 +4598,9 @@
         AppState.pendingConfirmAction();
       }
       closeConfirmDialog();
+        closePickupDetailsModal();
+        closeProvisionAdminModal();
+        closeAddCentreModal();
     }
 
     // --- Mobile Drawer ---
