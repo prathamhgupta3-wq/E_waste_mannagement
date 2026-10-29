@@ -14,7 +14,7 @@ const {
 // Public Authentication Endpoints
 router.post('/register', validate(registerSchema), authController.register);
 router.post('/login', validate(loginSchema), authController.login);
-router.post('/demo-login', validate(demoLoginSchema), authController.demoLogin);
+// router.post('/demo-login', validate(demoLoginSchema), authController.demoLogin);
 
 // Protected Identity & Profile Endpoints
 router.use(authenticateUser);
